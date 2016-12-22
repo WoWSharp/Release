@@ -67,13 +67,21 @@ namespace WoWSharp.DefaultRoutines.Mage
             if (l_ActivePlayer == null)
                 return;
 
-            if (l_ActivePlayer.HasAura(BrainFreeze.SpellId) && Flurry.CanCast(p_Target) && Flurry.IsInRange(p_Target))
+            var l_TargetLineOfSight = p_Target.IsLineOfSight();
+
+            if (l_ActivePlayer.HasAura(BrainFreeze.SpellId) && 
+                Flurry.CanCast(p_Target) && 
+                Flurry.IsInRange(p_Target) &&
+                l_TargetLineOfSight)
             {
                 Flurry.Cast(p_Target);
                 return;
             }
 
-            if (l_ActivePlayer.HasAura(HotStreak.SpellId) && Pyroblast.CanCast(p_Target) && Pyroblast.IsInRange(p_Target))
+            if (l_ActivePlayer.HasAura(HotStreak.SpellId) && 
+                Pyroblast.CanCast(p_Target) && 
+                Pyroblast.IsInRange(p_Target) &&
+                l_TargetLineOfSight)
             {
                 Pyroblast.Cast(p_Target);
                 return;
@@ -132,7 +140,10 @@ namespace WoWSharp.DefaultRoutines.Mage
 
             if (IceLance.IsKnown)
             {
-                if (l_ActivePlayer.HasAura(FingersOfFrost.SpellId) && IceLance.CanCast(p_Target) && IceLance.IsInRange(p_Target))
+                if (l_ActivePlayer.HasAura(FingersOfFrost.SpellId) && 
+                    IceLance.CanCast(p_Target) && 
+                    IceLance.IsInRange(p_Target) &&
+                    l_TargetLineOfSight)
                 {
                     Console.WriteLine("[Mage] Fingers of Frost found, cast Ice Lance !");
                     IceLance.Cast(p_Target);
@@ -141,20 +152,26 @@ namespace WoWSharp.DefaultRoutines.Mage
             }
             else if (FireBlast.IsKnown)
             {
-                if (FireBlast.CanCast(p_Target) && FireBlast.IsInRange(p_Target))
+                if (FireBlast.CanCast(p_Target) && 
+                    FireBlast.IsInRange(p_Target) &&
+                    l_TargetLineOfSight)
                 {
                     FireBlast.Cast(p_Target);
                     return;
                 }
             }
 
-            if (FrostBolt.CanCast(p_Target) && FrostBolt.IsInRange(p_Target))
+            if (FrostBolt.CanCast(p_Target) && 
+                FrostBolt.IsInRange(p_Target) &&
+                l_TargetLineOfSight)
             {
                 FrostBolt.Cast(p_Target);
                 return;
             }
 
-            if (Fireball.CanCast(p_Target) && Fireball.IsInRange(p_Target))
+            if (Fireball.CanCast(p_Target) && 
+                Fireball.IsInRange(p_Target) &&
+                l_TargetLineOfSight)
             {
                 Fireball.Cast(p_Target);
                 return;
