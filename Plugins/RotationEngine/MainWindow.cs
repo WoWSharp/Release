@@ -60,8 +60,11 @@ namespace RotationEngine
             }
         }
 
+        WoWSharp.Logics.Movements.IPlayerMover PlayerMover = new WoWSharp.Logics.Movements.SmoothTurnPlayerMover();
         private void MainWindow_OnUpdate(object sender, OnUpdateEventArgs e)
         {
+            PlayerMover.OnPulse();
+
             this.CheckButtonAttackOutOfCombatUnits.Enabled = Rotator.ActiveRoutine != null;
             this.CheckButtonAttackOutOfCombatUnits.Checked = Rotator.Settings.AttackOutOfCombatUnits;
 
@@ -100,9 +103,17 @@ namespace RotationEngine
 
         private void TestButton_OnClick(object sender, SimpleButton.OnClickEventArgs e)
         {
-            var l_Spell = new WoWSharp.WoW.Spell(116);
+            var l_Spell = new WoWSharp.WoW.Spell(190356);
 
-            Console.WriteLine(l_Spell.Name);
+            var l_Target = ObjectManager.ActivePlayer.Target;
+
+            if (l_Target != null)
+            {
+                PlayerMover.StartMoving(l_Target.Position);
+            }
+
+            //l_Spell.Cast(ObjectManager.ActivePlayer.Target.Position);
+
         }
     }
 }
