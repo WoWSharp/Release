@@ -7,6 +7,7 @@ using WoWSharp.UIControls;
 using WoWSharp.WoW;
 using WoWSharp.WoW.Impl.Frames;
 using WoWSharp.WoW.Impl.Lua;
+using WoWSharp.WoW.Impl.Objects;
 
 namespace RotationEngine
 {
@@ -63,6 +64,13 @@ namespace RotationEngine
         WoWSharp.Logics.Movements.IPlayerMover PlayerMover = new WoWSharp.Logics.Movements.SmoothTurnPlayerMover();
         private void MainWindow_OnUpdate(object sender, OnUpdateEventArgs e)
         {
+
+            var l_Target = ObjectManager.GetObjectByGuid<WowUnit>(l_FollowTargetGuid);
+
+            if (l_Target != null)
+            {
+                PlayerMover.StartMoving(l_Target.Position);
+            }
             PlayerMover.OnPulse();
 
             this.CheckButtonAttackOutOfCombatUnits.Enabled = Rotator.ActiveRoutine != null;
@@ -101,16 +109,12 @@ namespace RotationEngine
             }
         }
 
+        private WoWSharp.WoW.Impl.Objects.SmartGuid l_FollowTargetGuid = SmartGuid.Zero;
         private void TestButton_OnClick(object sender, SimpleButton.OnClickEventArgs e)
         {
             var l_Spell = new WoWSharp.WoW.Spell(190356);
 
-            var l_Target = ObjectManager.ActivePlayer.Target;
-
-            if (l_Target != null)
-            {
-                PlayerMover.StartMoving(l_Target.Position);
-            }
+            l_FollowTargetGuid = ObjectManager.ActivePlayer.TargetGuid;
 
             //l_Spell.Cast(ObjectManager.ActivePlayer.Target.Position);
 
