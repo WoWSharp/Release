@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WoWSharp.WoW.Impl.Frames;
 
 namespace WoWSharp.Morpher
 {
@@ -15,7 +16,7 @@ namespace WoWSharp.Morpher
 
         public string Author { get { return "WoWSharp"; } }
 
-        public bool AutoEnable { get { return true; } }
+        public bool AutoEnable { get { return false; } }
 
         public bool IsEnabled { get { return m_IsEnabled; } }
 
@@ -38,6 +39,8 @@ namespace WoWSharp.Morpher
             if (m_MainWindow != null)
                 m_MainWindow.Dispose();
         }
+
+        public SimpleFrame MainFrame { get { return null; } }
 
         public void OnEnable()
         {

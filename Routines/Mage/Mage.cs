@@ -10,32 +10,44 @@ namespace WoWSharp.DefaultRoutines.Mage
     {
         #region Spells
 
+        /* Generals */
         private static readonly WoW.Spell FrostBolt             = new WoW.Spell(116);
-        private static readonly WoW.Spell IceLance              = new WoW.Spell(30455);
         private static readonly WoW.Spell FireBlast             = new WoW.Spell(108853);
-        private static readonly WoW.Spell Flurry                = new WoW.Spell(44614);
-        private static readonly WoW.Spell SummonWaterElemental  = new WoW.Spell(31687);
-        private static readonly WoW.Spell FrozenOrb             = new WoW.Spell(84714);
-        private static readonly WoW.Spell IcyVeins              = new WoW.Spell(12472);
-        private static readonly WoW.Spell FrozenTouch           = new WoW.Spell(205030);
         private static readonly WoW.Spell Invisibility          = new WoW.Spell(66);
         private static readonly WoW.Spell MirrorImage           = new WoW.Spell(55342);
         private static readonly WoW.Spell RuneOfPower           = new WoW.Spell(116011);
+        private static readonly WoW.Spell TimeWarp              = new WoW.Spell(80353);
+
+        /* Arcane Spec */
+        private static readonly WoW.Spell ArcaneBlast           = new WoW.Spell(30451);
+        private static readonly WoW.Spell ArcaneMissiles        = new WoW.Spell(5143);
 
         /* Fire Spec */
-        private static readonly WoW.Spell Fireball             = new WoW.Spell(133);
-        private static readonly WoW.Spell Pyroblast            = new WoW.Spell(11366);
-        private static readonly WoW.Spell Combustion           = new WoW.Spell(190319);
+        private static readonly WoW.Spell Fireball              = new WoW.Spell(133);
+        private static readonly WoW.Spell Pyroblast             = new WoW.Spell(11366);
+        private static readonly WoW.Spell Combustion            = new WoW.Spell(190319);
+
+        /* Frost Spec */
+        private static readonly WoW.Spell FrozenOrb             = new WoW.Spell(84714);
+        private static readonly WoW.Spell IcyVeins              = new WoW.Spell(12472);
+        private static readonly WoW.Spell FrozenTouch           = new WoW.Spell(205030);
+        private static readonly WoW.Spell IceLance              = new WoW.Spell(30455);
+        private static readonly WoW.Spell SummonWaterElemental  = new WoW.Spell(31687);
+        private static readonly WoW.Spell Flurry                = new WoW.Spell(44614);
 
         #endregion
 
         #region Buffs
 
-        private static readonly WoW.Spell FingersOfFrost        = new WoW.Spell(44544);
-        private static readonly WoW.Spell BrainFreeze           = new WoW.Spell(190446);
+        /* Arcane Spec */
+        private static readonly WoW.Spell ArcaneMissilesProc    = new WoW.Spell(79683);
 
         /* Fire Spec */
         private static readonly WoW.Spell HotStreak             = new WoW.Spell(48108);
+
+        /* Frost Spec */
+        private static readonly WoW.Spell FingersOfFrost        = new WoW.Spell(44544);
+        private static readonly WoW.Spell BrainFreeze           = new WoW.Spell(190446);
 
         #endregion
 
@@ -57,19 +69,24 @@ namespace WoWSharp.DefaultRoutines.Mage
         public override double PullRange { get { return 30.0; } }
 
         /// <summary>
-        /// yiotitiuotyiuoy_çoho
+        /// Called when combating an unit
         /// </summary>
         /// <param name="p_Target"></param>
-        public override void OnCombat(WowUnit p_Target)
+        /// <param name="p_UseBigCooldowns"></param>
+        public override void OnCombat(WowUnit p_Target, bool p_UseBigCooldowns)
         {
             var l_ActivePlayer = WoW.ObjectManager.ActivePlayer;
 
             if (l_ActivePlayer == null)
                 return;
 
+            var l_TargetCombatRange = l_ActivePlayer.Position.Distance3D(p_Target.Position);
+            var l_PlayerSpecialization = l_ActivePlayer.Specialization;
             var l_TargetLineOfSight = p_Target.IsLineOfSight();
+            var l_PlayerCastingSpell = l_ActivePlayer.CastingSpell;
 
-            if (l_ActivePlayer.HasAura(BrainFreeze.SpellId) && 
+            if (l_PlayerSpecialization == WowPlayer.Specializations.MageFrost &&
+                l_ActivePlayer.HasAura(BrainFreeze.SpellId) && 
                 Flurry.CanCast(p_Target) && 
                 Flurry.IsInRange(p_Target) &&
                 l_TargetLineOfSight)
@@ -78,7 +95,8 @@ namespace WoWSharp.DefaultRoutines.Mage
                 return;
             }
 
-            if (l_ActivePlayer.HasAura(HotStreak.SpellId) && 
+            if (l_PlayerSpecialization == WowPlayer.Specializations.MageFire &&
+                l_ActivePlayer.HasAura(HotStreak.SpellId) && 
                 Pyroblast.CanCast(p_Target) && 
                 Pyroblast.IsInRange(p_Target) &&
                 l_TargetLineOfSight)
@@ -87,78 +105,131 @@ namespace WoWSharp.DefaultRoutines.Mage
                 return;
             }
 
-            var l_PlayerCastingSpell = l_ActivePlayer.CastingSpell;
-
             if (l_PlayerCastingSpell != null)
             {
                 // Nothing more to do while casting ...
                 return;
             }
 
-            if (Invisibility.CanCast() && l_ActivePlayer.HealthPercent <= 100 /* Check if boss when in party */)
+            if (l_PlayerSpecialization == WowPlayer.Specializations.MageArcane &&
+                l_ActivePlayer.HasAura(ArcaneMissilesProc.SpellId) &&
+                ArcaneMissiles.CanCast(p_Target) &&
+                ArcaneMissiles.IsInRange(p_Target) &&
+                l_TargetLineOfSight)
+            {
+                ArcaneMissiles.Cast(p_Target);
+                return;
+            }
+
+            if (p_UseBigCooldowns &&
+                l_ActivePlayer.IsInCombat&&
+                Invisibility.CanCast() &&
+                l_ActivePlayer.HealthPercent <= 100)
             {
                 Invisibility.Cast();
                 return;
             }
-            
-            if (FrozenOrb.CanCast(p_Target) /* Check range and if boss when in party */)
-            {
-                // Face target
-                FrozenOrb.Cast(p_Target);
-                return;
-            }
 
-            if (MirrorImage.CanCast() /* Check if boss when in party */)
+            if (p_UseBigCooldowns &&
+                l_ActivePlayer.IsInCombat&&
+                MirrorImage.CanCast())
             {
                 MirrorImage.Cast();
                 return;
             }
 
-            if (RuneOfPower.CanCast() /* Check if boss when in party */)
+            if (p_UseBigCooldowns &&
+                l_ActivePlayer.IsInCombat &&
+                RuneOfPower.CanCast())
             {
                 RuneOfPower.Cast();
                 return;
             }
 
-            if (Combustion.CanCast() /* Check if boss when in party */)
+            if (p_UseBigCooldowns &&
+                l_ActivePlayer.IsInCombat &&
+                TimeWarp.CanCast())
+            {
+                TimeWarp.Cast();
+                return;
+            }
+
+            if (p_UseBigCooldowns &&
+                l_PlayerSpecialization == WowPlayer.Specializations.MageFrost &&
+                l_ActivePlayer.IsInCombat&&
+                l_ActivePlayer.IsFacingHeading(p_Target.Position) &&
+                l_TargetCombatRange < 40.0f &&
+                FrozenOrb.CanCast(p_Target))
+            {
+                FrozenOrb.Cast(p_Target);
+                return;
+            }
+
+            if (p_UseBigCooldowns &&
+                l_PlayerSpecialization == WowPlayer.Specializations.MageFire &&
+                l_ActivePlayer.IsInCombat&&
+                Combustion.CanCast())
             {
                 Combustion.Cast();
                 return;
             }
 
-            if (IcyVeins.CanCast() /* Check if boss when in party */)
+            if (l_PlayerSpecialization == WowPlayer.Specializations.MageFrost &&
+                l_ActivePlayer.IsInCombat&&
+                p_UseBigCooldowns &&
+                IcyVeins.CanCast())
             {
                 IcyVeins.Cast();
                 return;
             }
 
-            if (FrozenTouch.CanCast() /* Check if boss when in party */)
+            if (l_PlayerSpecialization == WowPlayer.Specializations.MageFrost &&
+                l_ActivePlayer.IsInCombat&&
+                p_UseBigCooldowns &&
+                FrozenTouch.CanCast())
             {
                 FrozenTouch.Cast();
                 return;
             }
-
-            if (IceLance.IsKnown)
+            
+            if (l_PlayerSpecialization == WowPlayer.Specializations.MageFrost && 
+                l_ActivePlayer.HasAura(FingersOfFrost.SpellId) &&
+                IceLance.IsKnown &&
+                IceLance.CanCast(p_Target) && 
+                IceLance.IsInRange(p_Target) &&
+                l_TargetLineOfSight)
             {
-                if (l_ActivePlayer.HasAura(FingersOfFrost.SpellId) && 
-                    IceLance.CanCast(p_Target) && 
-                    IceLance.IsInRange(p_Target) &&
-                    l_TargetLineOfSight)
-                {
-                    Console.WriteLine("[Mage] Fingers of Frost found, cast Ice Lance !");
-                    IceLance.Cast(p_Target);
-                    return;
-                }
+                Console.WriteLine("[Mage] Fingers of Frost found, cast Ice Lance !");
+                IceLance.Cast(p_Target);
+                return;
             }
-            else if (FireBlast.IsKnown)
+            
+            if ((l_PlayerSpecialization == WowPlayer.Specializations.None || l_PlayerSpecialization == WowPlayer.Specializations.MageFire) &&
+                FireBlast.IsKnown &&
+                FireBlast.CanCast(p_Target) && 
+                FireBlast.IsInRange(p_Target) &&
+                l_TargetLineOfSight)
             {
-                if (FireBlast.CanCast(p_Target) && 
-                    FireBlast.IsInRange(p_Target) &&
-                    l_TargetLineOfSight)
-                {
-                    FireBlast.Cast(p_Target);
-                    return;
-                }
+                FireBlast.Cast(p_Target);
+                return;
+            }
+
+            if (l_PlayerSpecialization == WowPlayer.Specializations.MageFire &&
+                Fireball.CanCast(p_Target) &&
+                Fireball.IsInRange(p_Target) &&
+                l_TargetLineOfSight)
+            {
+                Fireball.Cast(p_Target);
+                return;
+            }
+
+            if (l_PlayerSpecialization == WowPlayer.Specializations.MageArcane &&
+                ArcaneBlast.CanCast(p_Target) &&
+                ArcaneBlast.IsInRange(p_Target) &&
+                l_TargetLineOfSight)
+            {
+                ArcaneBlast.Cast(p_Target);
+                return;
             }
 
             if (FrostBolt.CanCast(p_Target) && 
@@ -166,14 +237,6 @@ namespace WoWSharp.DefaultRoutines.Mage
                 l_TargetLineOfSight)
             {
                 FrostBolt.Cast(p_Target);
-                return;
-            }
-
-            if (Fireball.CanCast(p_Target) && 
-                Fireball.IsInRange(p_Target) &&
-                l_TargetLineOfSight)
-            {
-                Fireball.Cast(p_Target);
                 return;
             }
         }
@@ -185,20 +248,16 @@ namespace WoWSharp.DefaultRoutines.Mage
             if (l_ActivePlayer == null)
                 return;
 
-            var l_WaterElemental = GetWaterElementalUnit(l_ActivePlayer);
-
-            if (SummonWaterElemental.IsKnown && (l_WaterElemental == null || l_WaterElemental.IsDead) && SummonWaterElemental.CanCast())
+            if (l_ActivePlayer.Specialization == WowPlayer.Specializations.MageFrost)
             {
-                SummonWaterElemental.Cast();
-                return;
-            }
-
-            var l_PlayerCastingSpell = l_ActivePlayer.CastingSpell;
-
-            if (l_PlayerCastingSpell != null)
-            {
-                // Nothing more to do while casting ...
-                return;
+                var l_WaterElemental = GetWaterElementalUnit(l_ActivePlayer);
+                if (SummonWaterElemental.IsKnown &&
+                    (l_WaterElemental == null || l_WaterElemental.IsDead) &&
+                    SummonWaterElemental.CanCast())
+                {
+                    SummonWaterElemental.Cast();
+                    return;
+                }
             }
         }
 

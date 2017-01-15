@@ -8,6 +8,7 @@ namespace WoWSharp.Morpher
 {
     public class UserSettings
     {
+        public bool MainWindowVisibility = false;
         public bool PersistentMorphing = false;
         public int DisplayId = 1337;
     }

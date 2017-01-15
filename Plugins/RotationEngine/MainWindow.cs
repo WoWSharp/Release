@@ -13,17 +13,16 @@ namespace RotationEngine
 {
     public class MainWindow : Window
     {
-        private Button TestButton;
         private DropDownMenu DropDownMenuCombatRoutines;
         private CheckButton CheckButtonRotator;
         private CheckButton CheckButtonAttackOutOfCombatUnits;
+        private CheckButton CheckButtonBigCooldowns;
 
         public MainWindow(LuaTable p_Object, bool p_SelfCreated)
             : base(p_Object, p_SelfCreated)
         {
             if (p_SelfCreated)
             {
-                this.Visible = false;
                 this.SetPoint(AnchorPoint.Center);
                 this.Width = 250;
                 this.Height = 300;
@@ -39,7 +38,7 @@ namespace RotationEngine
                 this.CheckButtonRotator.Text = "Enable rotation";
                 this.CheckButtonRotator.OnClick += (object p_Sender, SimpleButton.OnClickEventArgs p_Event) =>
                 {
-                    Rotator.Settings.Enabled = !Rotator.Settings.Enabled;
+                    UserSettings.Instance.Enabled = !UserSettings.Instance.Enabled;
                 };
 
                 this.CheckButtonAttackOutOfCombatUnits = this.CreateChildFrame<CheckButton>();
@@ -47,37 +46,42 @@ namespace RotationEngine
                 this.CheckButtonAttackOutOfCombatUnits.Text = "Attack out of combat units";
                 this.CheckButtonAttackOutOfCombatUnits.OnClick += (object p_Sender, SimpleButton.OnClickEventArgs p_Event) => 
                 {
-                    Rotator.Settings.AttackOutOfCombatUnits = !Rotator.Settings.AttackOutOfCombatUnits;
+                    UserSettings.Instance.AttackOutOfCombatUnits = !UserSettings.Instance.AttackOutOfCombatUnits;
                 };
 
-                this.TestButton = this.CreateChildFrame<Button>();
-                this.TestButton.SetPoint(AnchorPoint.Bottom, 0, 20);
-                this.TestButton.Width = this.Width - 40;
-                this.TestButton.Text = "Test button";
-                this.TestButton.OnClick += TestButton_OnClick;
+                this.CheckButtonBigCooldowns = this.CreateChildFrame<CheckButton>();
+                this.CheckButtonBigCooldowns.SetPoint(AnchorPoint.TopLeft, this.CheckButtonAttackOutOfCombatUnits, AnchorPoint.TopLeft, 0, -30);
+                this.CheckButtonBigCooldowns.Text = "Use cooldows on boss only";
+                this.CheckButtonBigCooldowns.OnClick += (object p_Sender, SimpleButton.OnClickEventArgs p_Event) =>
+                {
+                    UserSettings.Instance.BigCooldownsBossOnly = !UserSettings.Instance.BigCooldownsBossOnly;
+                };
 
                 this.OnUpdate += MainWindow_OnUpdate;
-                SetCombatRoutine(WoWSharp.Plugins.LoadedRoutines.FirstOrDefault(x => x.Name == Rotator.Settings.LastCombatRotation));
+                this.OnHide += MainWindow_OnHide;
+                this.OnShow += MainWindow_OnShow;
+                this.Visible = UserSettings.Instance.MainWindowVisibility;
+                SetCombatRoutine(WoWSharp.Plugins.LoadedRoutines.FirstOrDefault(x => x.Name == UserSettings.Instance.LastCombatRotation));
             }
         }
 
-        WoWSharp.Logics.Movements.IPlayerMover PlayerMover = new WoWSharp.Logics.Movements.SmoothTurnPlayerMover();
+        private void MainWindow_OnShow(object sender, OnShowEventArgs e)
+        {
+            UserSettings.Instance.MainWindowVisibility = true;
+        }
+
+        private void MainWindow_OnHide(object sender, OnHideEventArgs e)
+        {
+            UserSettings.Instance.MainWindowVisibility = false;
+        }
+
         private void MainWindow_OnUpdate(object sender, OnUpdateEventArgs e)
         {
-
-            var l_Target = ObjectManager.GetObjectByGuid<WowUnit>(l_FollowTargetGuid);
-
-            if (l_Target != null)
-            {
-                PlayerMover.StartMoving(l_Target.Position);
-            }
-            PlayerMover.OnPulse();
-
-            this.CheckButtonAttackOutOfCombatUnits.Enabled = Rotator.ActiveRoutine != null;
-            this.CheckButtonAttackOutOfCombatUnits.Checked = Rotator.Settings.AttackOutOfCombatUnits;
-
-            this.CheckButtonRotator.Checked = Rotator.Settings.Enabled;
             this.CheckButtonRotator.Enabled = Rotator.ActiveRoutine != null;
+
+            this.CheckButtonRotator.Checked = UserSettings.Instance.Enabled;
+            this.CheckButtonAttackOutOfCombatUnits.Checked = UserSettings.Instance.AttackOutOfCombatUnits;
+            this.CheckButtonBigCooldowns.Checked = UserSettings.Instance.BigCooldownsBossOnly;
         }
 
         private void DropDownMenuCombatRoutines_OnLoad(object sender, DropDownMenu.OnLoadEventArgs e)
@@ -100,6 +104,7 @@ namespace RotationEngine
             if (p_Routine != null)
             {
                 Rotator.ActiveRoutine = p_Routine;
+                UserSettings.Instance.LastCombatRotation = p_Routine.Name;
                 this.DropDownMenuCombatRoutines.Text = p_Routine.Name;
             }
             else
@@ -107,17 +112,6 @@ namespace RotationEngine
                 Rotator.ActiveRoutine = null;
                 this.DropDownMenuCombatRoutines.Text = "Select combat routine ...";
             }
-        }
-
-        private WoWSharp.WoW.Impl.Objects.SmartGuid l_FollowTargetGuid = SmartGuid.Zero;
-        private void TestButton_OnClick(object sender, SimpleButton.OnClickEventArgs e)
-        {
-            var l_Spell = new WoWSharp.WoW.Spell(190356);
-
-            l_FollowTargetGuid = ObjectManager.ActivePlayer.TargetGuid;
-
-            //l_Spell.Cast(ObjectManager.ActivePlayer.Target.Position);
-
         }
     }
 }
