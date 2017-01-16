@@ -34,7 +34,6 @@ namespace RotationEngine
         }
 
         public bool MainWindowVisibility = false;
-        public bool Enabled = false;
         public bool AttackOutOfCombatUnits = false;
         public bool BigCooldownsBossOnly = true;
         public string LastCombatRotation = string.Empty;

@@ -9,12 +9,13 @@ namespace RotationEngine
     public static class Rotator
     {
         public static WoWSharp.Logics.Combats.CombatRoutine ActiveRoutine = null;
+        public static bool Enabled = false;
 
         public static void OnPulse(object p_Sender, WoWSharp.WoW.Pulsator.OnPulseEventArgs p_EventArgs)
         {
             var l_ActivePlayer = WoWSharp.WoW.ObjectManager.ActivePlayer;
 
-            if (l_ActivePlayer != null && UserSettings.Instance.Enabled && ActiveRoutine != null)
+            if (l_ActivePlayer != null && Enabled && ActiveRoutine != null)
             {
                 var l_Target = l_ActivePlayer.Target;
                 

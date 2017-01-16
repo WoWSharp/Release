@@ -38,7 +38,19 @@ namespace RotationEngine
                 this.CheckButtonRotator.Text = "Enable rotation";
                 this.CheckButtonRotator.OnClick += (object p_Sender, SimpleButton.OnClickEventArgs p_Event) =>
                 {
-                    UserSettings.Instance.Enabled = !UserSettings.Instance.Enabled;
+                    if (Rotator.ActiveRoutine != null)
+                    {
+                        if (Rotator.Enabled)
+                        {
+                            Rotator.ActiveRoutine.OnStop();
+                            Rotator.Enabled = false;
+                        }
+                        else
+                        {
+                            Rotator.ActiveRoutine.OnStart();
+                            Rotator.Enabled = true;
+                        }
+                    }
                 };
 
                 this.CheckButtonAttackOutOfCombatUnits = this.CreateChildFrame<CheckButton>();
@@ -79,7 +91,7 @@ namespace RotationEngine
         {
             this.CheckButtonRotator.Enabled = Rotator.ActiveRoutine != null;
 
-            this.CheckButtonRotator.Checked = UserSettings.Instance.Enabled;
+            this.CheckButtonRotator.Checked = Rotator.Enabled;
             this.CheckButtonAttackOutOfCombatUnits.Checked = UserSettings.Instance.AttackOutOfCombatUnits;
             this.CheckButtonBigCooldowns.Checked = UserSettings.Instance.BigCooldownsBossOnly;
         }
