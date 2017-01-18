@@ -76,12 +76,10 @@ namespace WoWSharp.DefaultRoutines.Mage
                 l_Spell                     = m_RotationBook.AddSpell("Combat", (int)Spells.Pyroblast);
                 l_Spell.Match               = MatchType.MatchAll;
                 l_Spell.AddEvaluator(EvaluedUnitType.SelfPlayer, p_Unit => p_Unit != null && p_Unit.HasAura((int)Auras.HotStreak));
-                l_Spell.AddEvaluator(EvaluedUnitType.EvaluedUnit, p_Unit => ObjectManager.ActivePlayer.IsFacingHeading(p_Unit.Position));
 
                 // Fireball
                 l_Spell                     = m_RotationBook.AddSpell("Combat", (int)Spells.Fireball);
                 l_Spell.Match               = MatchType.MatchAll;
-                l_Spell.AddEvaluator(EvaluedUnitType.EvaluedUnit, p_Unit => ObjectManager.ActivePlayer.IsFacingHeading(p_Unit.Position));
             }
             else if (WoW.ObjectManager.ActivePlayer.Specialization == WowPlayer.Specializations.MageArcane)
             {
@@ -136,13 +134,11 @@ namespace WoWSharp.DefaultRoutines.Mage
                 l_Spell                     = m_RotationBook.AddSpell("Combat", (int)Spells.ArcaneMissiles);
                 l_Spell.Match               = MatchType.MatchAll;
                 l_Spell.AddEvaluator(EvaluedUnitType.SelfPlayer,    p_Unit => p_Unit != null && p_Unit.HasAura((int)Auras.ArcaneMissiles));
-                l_Spell.AddEvaluator(EvaluedUnitType.EvaluedUnit,   p_Unit => ObjectManager.ActivePlayer.IsFacingHeading(p_Unit.Position));
 
                 // Nether Tempest
                 l_Spell = m_RotationBook.AddSpell("Combat", (int)Spells.NetherTempest);
                 l_Spell.Match               = MatchType.MatchAll;
                 l_Spell.AddEvaluator(EvaluedUnitType.EvaluedUnit,   p_Unit => p_Unit != null && !p_Unit.HasAura((int)Auras.NetherTempest));
-                l_Spell.AddEvaluator(EvaluedUnitType.EvaluedUnit,   p_Unit => ObjectManager.ActivePlayer.IsFacingHeading(p_Unit.Position));
 
                 // Charged Up
                 l_Spell                     = m_RotationBook.AddSpell("Combat", (int)Spells.ChargedUp);
@@ -154,8 +150,7 @@ namespace WoWSharp.DefaultRoutines.Mage
                 l_Spell                     = m_RotationBook.AddSpell("Combat", (int)Spells.ArcaneBarrage);
                 l_Spell.Match               = MatchType.MatchAll;
                 l_Spell.AddEvaluator(EvaluedUnitType.SelfPlayer, p_Unit => p_Unit != null && p_Unit.GetPower(WowUnit.PowerType.ArcaneCharges) >= 4);
-                l_Spell.AddEvaluator(EvaluedUnitType.EvaluedUnit, p_Unit => ObjectManager.ActivePlayer.IsFacingHeading(p_Unit.Position));
-
+                
                 // Arcane Orb when more than 2 adds (including current target) are in front of player
                 l_Spell                     = m_RotationBook.AddSpell("Combat", (int)Spells.ArcaneOrb);
                 l_Spell.Match               = MatchType.MatchAll;
@@ -189,7 +184,6 @@ namespace WoWSharp.DefaultRoutines.Mage
                 l_Spell                     = m_RotationBook.AddSpell("Combat", (int)Spells.ArcaneBlast);
                 l_Spell.Match               = MatchType.MatchAll;
                 l_Spell.AddEvaluator(EvaluedUnitType.SelfPlayer, p_Unit => p_Unit != null && p_Unit.GetPower(WowUnit.PowerType.ArcaneCharges) < 4);
-                l_Spell.AddEvaluator(EvaluedUnitType.EvaluedUnit, p_Unit => ObjectManager.ActivePlayer.IsFacingHeading(p_Unit.Position));
 
                 #endregion
             }
@@ -233,13 +227,13 @@ namespace WoWSharp.DefaultRoutines.Mage
                 l_Spell                     = m_RotationBook.AddSpell("Combat", (int)Spells.Flurry);
                 l_Spell.Match               = MatchType.MatchAll;
                 l_Spell.AddEvaluator(EvaluedUnitType.SelfPlayer,    p_Unit => p_Unit != null && p_Unit.HasAura((int)Auras.BrainFreeze));
-                l_Spell.AddEvaluator(EvaluedUnitType.EvaluedUnit,   p_Unit => ObjectManager.ActivePlayer.IsFacingHeading(p_Unit.Position));
+                //l_Spell.AddEvaluator(EvaluedUnitType.EvaluedUnit,   p_Unit => ObjectManager.ActivePlayer.IsFacingHeading(p_Unit.Position));
 
                 // Ice Lance when Fingers of Frost proc
                 l_Spell                     = m_RotationBook.AddSpell("Combat", (int)Spells.IceLance);
                 l_Spell.Match               = MatchType.MatchAll;
                 l_Spell.AddEvaluator(EvaluedUnitType.SelfPlayer,    p_Unit => p_Unit != null && p_Unit.HasAura((int)Auras.FingersOfFrost));
-                l_Spell.AddEvaluator(EvaluedUnitType.EvaluedUnit,   p_Unit => ObjectManager.ActivePlayer.IsFacingHeading(p_Unit.Position));
+                //l_Spell.AddEvaluator(EvaluedUnitType.EvaluedUnit,   p_Unit => ObjectManager.ActivePlayer.IsFacingHeading(p_Unit.Position));
 
                 // Cone of Cold when more than 2 adds (including current target) are in front of player
                 l_Spell                     = m_RotationBook.AddSpell("Combat", (int)Spells.ConeOfCold);
@@ -303,18 +297,18 @@ namespace WoWSharp.DefaultRoutines.Mage
                 l_Spell                     = m_RotationBook.AddSpell("Combat", (int)Spells.GlacialSpike);
                 l_Spell.Match               = MatchType.MatchAll;
                 l_Spell.AddEvaluator(EvaluedUnitType.EvaluedUnit, p_Unit => p_Unit != null && p_Unit.HealthPercent > 20);
-                l_Spell.AddEvaluator(EvaluedUnitType.EvaluedUnit, p_Unit => p_Unit != null && ObjectManager.ActivePlayer.IsFacingHeading(p_Unit.Position));
+                //l_Spell.AddEvaluator(EvaluedUnitType.EvaluedUnit, p_Unit => p_Unit != null && ObjectManager.ActivePlayer.IsFacingHeading(p_Unit.Position));
 
                 // Ray of Frost
                 l_Spell                     = m_RotationBook.AddSpell("Combat", (int)Spells.RayOfFrost);
                 l_Spell.Match               = MatchType.MatchAll;
                 l_Spell.AddEvaluator(EvaluedUnitType.EvaluedUnit, p_Unit => p_Unit != null && p_Unit.HealthPercent > 20);
-                l_Spell.AddEvaluator(EvaluedUnitType.EvaluedUnit, p_Unit => p_Unit != null && ObjectManager.ActivePlayer.IsFacingHeading(p_Unit.Position));
+                //l_Spell.AddEvaluator(EvaluedUnitType.EvaluedUnit, p_Unit => p_Unit != null && ObjectManager.ActivePlayer.IsFacingHeading(p_Unit.Position));
 
                 // Frostbolt
                 l_Spell                     = m_RotationBook.AddSpell("Combat", (int)Spells.FrostBolt);
                 l_Spell.Match               = MatchType.MatchAll;
-                l_Spell.AddEvaluator(EvaluedUnitType.EvaluedUnit, p_Unit => ObjectManager.ActivePlayer.IsFacingHeading(p_Unit.Position));
+                //l_Spell.AddEvaluator(EvaluedUnitType.EvaluedUnit, p_Unit => ObjectManager.ActivePlayer.IsFacingHeading(p_Unit.Position));
 
                 #endregion
             }

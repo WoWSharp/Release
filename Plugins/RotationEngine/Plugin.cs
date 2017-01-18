@@ -23,8 +23,14 @@ namespace RotationEngine
             WoWSharp.GUI.OnCreateGUI += GUI_OnCreateGUI;
             WoWSharp.GUI.OnDisposeGUI += GUI_OnDisposeGUI;
             WoWSharp.WoW.Pulsator.OnPulse += Rotator.OnPulse;
+            WoWSharp.WoW.Graphics.Rendering.ActiveRenderer.OnFrame += ActiveRenderer_OnFrame;
 
             GUI_OnCreateGUI(this, new GUI.OnCreateGUIEventArgs());
+        }
+
+        private void ActiveRenderer_OnFrame(object sender, WoWSharp.WoW.Graphics.Renderer.OnFrameEventArgs e)
+        {
+
         }
 
         private void GUI_OnDisposeGUI(object sender, WoWSharp.GUI.OnDisposeGUIEventArgs e)
