@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WoWSharp.WoW.Impl.Objects;
 
 namespace RotationEngine
 {
@@ -17,6 +18,7 @@ namespace RotationEngine
 
             if (l_ActivePlayer != null && Enabled && ActiveRoutine != null)
             {
+
                 var l_Target = l_ActivePlayer.Target;
                 
                 if (l_Target != null && 
