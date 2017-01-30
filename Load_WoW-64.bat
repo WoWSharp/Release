@@ -1,0 +1,1 @@
+inject.exe --inject --name wow-64.exe  --module WoWSharp.DomainManager.dll --export Initialize --path-resolution

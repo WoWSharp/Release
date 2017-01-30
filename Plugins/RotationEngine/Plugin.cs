@@ -8,13 +8,13 @@ using WoWSharp.WoW.Impl.Frames;
 
 namespace RotationEngine
 {
-    public class Plugin : WoWSharp.IPlugin
+    public class Plugin : IPlugin
     {
         private MainWindow m_MainWindow = null;
 
-        public string Name { get { return "Rotation Engine"; } }
+        public string Name => "Rotation Engine";
 
-        public string Author { get { return "WoWSharp"; } }
+        public string Author => "WoWSharp";
 
         public void OnLoad()
         {
@@ -52,9 +52,6 @@ namespace RotationEngine
             UserSettings.Instance.SaveToDisk();
         }
 
-        public SimpleFrame MainFrame
-        {
-            get { return m_MainWindow; }
-        }
+        public SimpleFrame MainFrame => m_MainWindow;
     }
 }
