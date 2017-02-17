@@ -9,18 +9,11 @@ namespace WoWSharp.Morpher
 {
     public class Plugin : WoWSharp.IPlugin
     {
+        public override string Name => "Morpher";
 
-        private bool m_IsEnabled = false;
+        public override string Author => "WoWSharp";
 
-        public string Name { get { return "Morpher"; } }
-
-        public string Author { get { return "WoWSharp"; } }
-
-        public bool AutoEnable { get { return false; } }
-
-        public bool IsEnabled { get { return m_IsEnabled; } }
-
-        public void OnLoad()
+        public override void OnLoad()
         {
             BuildGUI();
 
@@ -32,40 +25,20 @@ namespace WoWSharp.Morpher
             BuildGUI();
         }
 
-        public void OnUnload()
+        public override void OnUnload()
         {
             WoWSharp.GUI.OnCreateGUI -= GUI_OnCreateGUI;
 
-            if (m_MainWindow != null)
-                m_MainWindow.Dispose();
+            m_MainWindow?.Dispose();
         }
 
-        public SimpleFrame MainFrame { get { return null; } }
-
-        public void OnEnable()
-        {
-            if (m_MainWindow != null)
-            {
-                m_MainWindow.Show();
-            }
-
-            m_IsEnabled = true;
-        }
-
-        public void OnDisable()
-        {
-            if (m_MainWindow != null)
-            {
-                m_MainWindow.Hide();
-            }
-
-            m_IsEnabled = false;
-        }
+        public override SimpleFrame MainFrame => m_MainWindow;
 
         private MainWindow m_MainWindow = null;
         private void BuildGUI()
         {
             m_MainWindow = WoWSharp.WoW.GameUI.CreateFrame<MainWindow>();
+            m_MainWindow.Visible = false;
         }
     }
 }

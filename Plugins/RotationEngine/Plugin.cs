@@ -12,11 +12,11 @@ namespace RotationEngine
     {
         private MainWindow m_MainWindow = null;
 
-        public string Name => "Rotation Engine";
+        public override string Name => "Rotation Engine";
 
-        public string Author => "WoWSharp";
+        public override string Author => "WoWSharp";
 
-        public void OnLoad()
+        public override void OnLoad()
         {
             UserSettings.Instance = UserSettings.LoadFromDisk();
 
@@ -43,7 +43,7 @@ namespace RotationEngine
             m_MainWindow = WoWSharp.WoW.GameUI.CreateFrame<MainWindow>();
         }
 
-        public void OnUnload()
+        public override void OnUnload()
         {
             WoWSharp.GUI.OnDisposeGUI -= GUI_OnDisposeGUI;
             WoWSharp.GUI.OnCreateGUI -= GUI_OnCreateGUI;
@@ -52,6 +52,6 @@ namespace RotationEngine
             UserSettings.Instance.SaveToDisk();
         }
 
-        public SimpleFrame MainFrame => m_MainWindow;
+        public override SimpleFrame MainFrame => m_MainWindow;
     }
 }
